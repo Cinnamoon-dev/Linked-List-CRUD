@@ -1,8 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 typedef struct {
-    int num;
+    char code[50];
+    char name[255];
+    char address[255];
+    char wage[50];
+    char birth_date[50];
+    char type[50];
+    vehicles vehicles;
+} employee;
+
+typedef struct {
+    char code[50];
+    char employee_code[50];
+    char description[255];
+    char plate[20];
+    char brand[50];
+    char model[50]
+} vehicle;
+
+typedef struct {
+    vehicle *vehicle;
+    int count;
+} vehicles;
+
+typedef struct {
+    employee employee;
     struct element *next;
 } element;
 
@@ -101,23 +127,29 @@ element* delete_element(element *list, int value) {
     return list;
 }
 
+void input(char str[], int tam, char *msg)
+{
+    printf("%s", msg);
+    fgets(str, tam, stdin);
+    fflush(stdin);
+
+    size_t ln = strlen(str) - 1;
+    if (str[ln] == '\n')
+        str[ln] = '\0';
+}
+
+void lower_case(char *string)
+{
+    for(int i = 0; i < strlen(string); i++)
+    {
+        string[i] = tolower(string[i]);
+    }
+}
+
+void create_employee() {}
+
 int main() {
     element *list = NULL;
-
-    list = insert_element(list, 1);
-    list = insert_element(list, 2);
-    list = insert_element(list, 3);
-    list = insert_element(list, 4);
-
-    read_element(list);
-
-    list = update_element(list, 7, 2);
-
-    read_element(list);
-
-    list = delete_element(list, 3);
-
-    read_element(list);
 
     return 0;
 }
