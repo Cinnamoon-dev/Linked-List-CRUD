@@ -4,6 +4,20 @@
 #include <ctype.h>
 
 typedef struct {
+    char code_employee[50];
+    char code_vehicle[50];
+    char name[255];
+    char address[255];
+    char wage[50];
+    char birth_date[50];
+    char type[50];
+    char description[255];
+    char plate[50];
+    char brand[50];
+    char model[50];
+} buffer;
+
+typedef struct {
     char code[50];
     char name[255];
     char address[255];
@@ -19,7 +33,7 @@ typedef struct {
     char description[255];
     char plate[20];
     char brand[50];
-    char model[50]
+    char model[50];
 } vehicle;
 
 typedef struct {
@@ -146,7 +160,10 @@ void lower_case(char *string)
     }
 }
 
-void create_employee() {}
+void create_employee(element *list) {
+    element *aux = create_element();
+    
+}
 
 int main() {
     element *list = NULL;
