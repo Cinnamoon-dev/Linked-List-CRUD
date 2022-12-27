@@ -74,11 +74,38 @@ element* insert_employee(element *list) {
     element *new = create_element();
     buffer_emp buff;
 
-    input(buff.code, 50, "code: ");
-    input(buff.name, 255, "name: ");
-    input(buff.address, 255, "address: ");
-    input(buff.wage, 50, "wage: ");
-    input(buff.birth_date, 50, "birth date: ");
+    if(list == NULL) {
+        do { input(buff.code, 50, "code(can not repeat or be empty): "); } while(strlen(buff.code) == 0);
+        do { input(buff.name, 255, "name(can not be empty): "); } while(strlen(buff.name) == 0);
+        do { input(buff.address, 255, "address(can not be empty): "); } while(strlen(buff.address) == 0);
+        input(buff.wage, 50, "wage: ");
+        do { input(buff.birth_date, 50, "birth date(can not be empty): "); } while(strlen(buff.birth_date) == 0);
+    }
+    else {
+        element *aux = list;
+        int count;
+
+        do{
+            count = 0;
+            input(buff.code, 50, "code(can not repeat or be empty): ");
+
+            while(aux != NULL) {
+                if(strcmp(aux->employee.code, buff.code) == 0) {
+                    count++;
+                    break;
+                }
+                aux = aux->next;
+            }
+
+            aux = list;
+        } while(strlen(buff.code) == 0 || count != 0);
+
+        do{ input(buff.name, 255, "name(can not be empty): "); } while(strlen(buff.name) == 0);
+        do { input(buff.address, 255, "address(can not be empty): "); } while(strlen(buff.address) == 0);
+        input(buff.wage, 50, "wage: ");
+        do { input(buff.birth_date, 50, "birth date(can not be empty): "); } while(strlen(buff.birth_date) == 0);
+    }
+
 
     strcpy(new->employee.code, buff.code);
     strcpy(new->employee.name, buff.name);
@@ -111,6 +138,7 @@ void read_employee(element *list) {
 element* update_employee(element *list) {
     element *aux = list;
     char buff_code[50];
+    int count;
     buffer_emp buff;
 
     input(buff_code, 50, "code of the employee that you want to change: ");
@@ -124,11 +152,25 @@ element* update_employee(element *list) {
         return list;
     }
 
-    input(buff.code, 50, "code: ");
-    input(buff.name, 255, "name: ");
-    input(buff.address, 255, "address: ");
+    do{
+        count = 0;
+        input(buff.code, 50, "code(can not repeat or be empty): ");
+
+        while(aux != NULL) {
+            if(strcmp(aux->employee.code, buff.code) == 0) {
+                count++;
+                break;
+            }
+            aux = aux->next;
+        }
+
+        aux = list;
+    } while(strlen(buff.code) == 0 || count != 0);
+
+    do{ input(buff.name, 255, "name(can not be empty): "); } while(strlen(buff.name) == 0);
+    do { input(buff.address, 255, "address(can not be empty): "); } while(strlen(buff.address) == 0);
     input(buff.wage, 50, "wage: ");
-    input(buff.birth_date, 50, "birth date: ");
+    do { input(buff.birth_date, 50, "birth date(can not be empty): "); } while(strlen(buff.birth_date) == 0);
 
     strcpy(aux->employee.code, buff.code);
     strcpy(aux->employee.name, buff.name);
