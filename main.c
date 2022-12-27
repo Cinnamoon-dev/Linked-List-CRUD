@@ -4,28 +4,21 @@
 #include <ctype.h>
 
 typedef struct {
-    char code_employee[50];
-    char code_vehicle[50];
-    char name[255];
-    char address[255];
-    char wage[50];
-    char birth_date[50];
-    char type[50];
-    char description[255];
-    char plate[50];
-    char brand[50];
-    char model[50];
-} buffer;
-
-typedef struct {
     char code[50];
     char name[255];
     char address[255];
     char wage[50];
     char birth_date[50];
-    char type[50];
-    vehicles vehicles;
-} employee;
+} buffer_emp;
+
+typedef struct {
+    char code[50];
+    char employee_code[50];
+    char description[255];
+    char plate[50];
+    char brand[50];
+    char model[50];
+} buffer_veh;
 
 typedef struct {
     char code[50];
@@ -42,107 +35,20 @@ typedef struct {
 } vehicles;
 
 typedef struct {
+    char code[50];
+    char name[255];
+    char address[255];
+    char wage[50];
+    char birth_date[50];
+    vehicles vehicles;
+} employee;
+
+typedef struct {
     employee employee;
     struct element *next;
 } element;
 
-element* create_element() {
-    element *new = (element*) malloc(sizeof(element));
-    return new;
-}
-
-element* insert_element(element *list, int data) {
-    element *new = create_element();
-    new->num = data;
-
-    if(list == NULL) {
-        list = new;
-        new->next = NULL;   
-    } 
-    else {
-        new->next = list;
-        list = new;
-    }
-
-    return list;
-}
-
-void read_element(element *list) {
-    element *aux = list;
-
-    while(aux != NULL) {
-        printf("%d\n", aux->num);
-        aux = aux->next;
-    }
-    printf("\n");
-}
-
-element* update_element(element *list, int data, int value) {
-    element *aux = list;
-
-    while(aux->num != value && aux->next != NULL) {
-        aux = aux->next;
-    }
-
-    if(aux->next == NULL && aux->num != value) {
-        printf("This number is not in the list!\n");
-        return list;
-    }
-
-    aux->num = data;
-    return list;
-}
-
-element* delete_element(element *list, int value) {
-    if(list == NULL) {
-        printf("You can't delete from an empty list\n");
-        return list;
-    }
-
-    else if(list->num == value) { // if it is the first one
-        element *aux;
-
-        aux = list;
-        list = list->next;
-        free(aux);
-
-        return list;
-    }
-
-    else {
-        if(list->next != NULL) {
-            element *aux_bfr = list;
-            element *aux = list->next;
-            element *aux_rmv = NULL;
-
-            while(aux->next != NULL && aux->num != value) {
-                aux_bfr = aux_bfr->next;
-                aux = aux->next;
-            }
-
-            if(aux->next == NULL && aux->num != value) {
-                printf("This number is not in the list!\n");
-                return list;
-            }            
-
-            aux_rmv = aux;
-            aux = aux->next;
-            aux_bfr->next = aux;
-            free(aux_rmv);
-
-            return list;
-        }
-        else {
-            printf("This number is not in the list!\n");
-            return list;
-        }
-    }
-
-    return list;
-}
-
-void input(char str[], int tam, char *msg)
-{
+void input(char str[], int tam, char *msg) {
     printf("%s", msg);
     fgets(str, tam, stdin);
     fflush(stdin);
@@ -152,21 +58,148 @@ void input(char str[], int tam, char *msg)
         str[ln] = '\0';
 }
 
-void lower_case(char *string)
-{
+void lower_case(char *string) {
     for(int i = 0; i < strlen(string); i++)
     {
         string[i] = tolower(string[i]);
     }
 }
 
-void create_employee(element *list) {
-    element *aux = create_element();
-    
+element* create_element() {
+    element *new = (element*) malloc(sizeof(element));
+    return new;
+}
+
+element* insert_employee(element *list) {
+    element *new = create_element();
+    buffer_emp buff;
+
+    input(buff.code, 50, "code: ");
+    input(buff.name, 255, "name: ");
+    input(buff.address, 255, "address: ");
+    input(buff.wage, 50, "wage: ");
+    input(buff.birth_date, 50, "birth date: ");
+
+    strcpy(new->employee.code, buff.code);
+    strcpy(new->employee.name, buff.name);
+    strcpy(new->employee.address, buff.address);
+    strcpy(new->employee.wage, buff.wage);
+    strcpy(new->employee.birth_date, buff.birth_date);
+
+    if(list == NULL) {
+        list = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list = new;
+    }
+
+    return list;
+}
+
+void read_employee(element *list) {
+    element *aux = list;
+
+    printf("\nLISTAGEM\n");
+    while(aux != NULL) {
+        printf("code: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
+        aux = aux->next;
+    }
+}
+
+element* update_employee(element *list) {
+    element *aux = list;
+    char buff_code[50];
+    buffer_emp buff;
+
+    input(buff_code, 50, "code of the employee that you want to change: ");
+
+    while(strcmp(aux->employee.code, buff_code) != 0 && aux->next != NULL) {
+        aux = aux->next;
+    }
+
+    if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        printf("The employee is not in the list!\n");
+        return list;
+    }
+
+    input(buff.code, 50, "code: ");
+    input(buff.name, 255, "name: ");
+    input(buff.address, 255, "address: ");
+    input(buff.wage, 50, "wage: ");
+    input(buff.birth_date, 50, "birth date: ");
+
+    strcpy(aux->employee.code, buff.code);
+    strcpy(aux->employee.name, buff.name);
+    strcpy(aux->employee.address, buff.address);
+    strcpy(aux->employee.wage, buff.wage);
+    strcpy(aux->employee.birth_date, buff.birth_date);
+
+    return list;
+}
+
+element* delete_employee(element *list) {
+    if(list == NULL) {
+        printf("You can't delete from an empty list\n");
+        return list;
+    }
+
+    char buff_code[50];
+    input(buff_code, 50, "code of the employee that you want to delete: ");
+
+    if(strcmp(list->employee.code, buff_code) == 0) {
+        element *aux = list;
+
+        list = list->next;
+        free(aux);
+
+        return list;
+    }
+    else {
+        if(list->next != NULL) {
+            element *aux_bfr = list;
+            element *aux = list->next;
+            element *aux_rmv = NULL;
+
+            while(aux->next != NULL && strcmp(aux->employee.code, buff_code) != 0) {
+                aux_bfr = aux_bfr->next;
+                aux = aux->next;
+            }
+
+            if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
+                printf("The employee is not in the list!\n");
+                return list;
+            }
+
+            aux_rmv = aux;
+            aux = aux->next;
+            aux_bfr->next = aux;
+            free(aux_rmv);
+
+            return list;
+        }
+        else {
+            printf("The employee is not in the list!\n");
+            return list;
+        }
+    }
+
+    return list;
 }
 
 int main() {
     element *list = NULL;
 
+    list = insert_employee(list);
+    list = insert_employee(list);
+    list = insert_employee(list);
+    read_employee(list);
+
+    list = update_employee(list);
+    read_employee(list);
+
+    list = delete_employee(list);
+    read_employee(list);
     return 0;
 }
