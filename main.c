@@ -80,6 +80,7 @@ element* insert_vehicle(element *list) {
     vehicles *new = create_vehicle();
     buffer_veh buff;
     char buff_code[50];
+
     input(buff_code, 50, "code of the employee you want to add a car:");
 
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
@@ -184,7 +185,9 @@ void read_employee(element *list) {
 
 void read_vehicles(element *list) {
     element *aux = list;
+    vehicles *aux_veh;
     char buff_code[50];
+
     input(buff_code, 50, "code of the employee you want to list the vehicles:");
 
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
@@ -196,9 +199,10 @@ void read_vehicles(element *list) {
         return;
     }
 
-    while(aux->employee.vehicles != NULL) {
-        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux->employee.vehicles->vehicle.code, aux->employee.vehicles->vehicle.employee_code, aux->employee.vehicles->vehicle.description, aux->employee.vehicles->vehicle.plate, aux->employee.vehicles->vehicle.brand, aux->employee.vehicles->vehicle.model);
-        aux = aux->next;
+    aux_veh = aux->employee.vehicles;
+    while(aux_veh != NULL) {
+        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+        aux_veh = aux_veh->next;
     }
 }
 
