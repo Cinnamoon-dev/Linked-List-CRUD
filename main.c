@@ -30,8 +30,8 @@ typedef struct {
 } vehicle;
 
 typedef struct {
-    vehicle *vehicle;
-    int count;
+    vehicle vehicle;
+    struct vehicles *next;
 } vehicles;
 
 typedef struct {
@@ -106,7 +106,6 @@ element* insert_employee(element *list) {
         do { input(buff.birth_date, 50, "birth date(can not be empty): "); } while(strlen(buff.birth_date) == 0);
     }
 
-
     strcpy(new->employee.code, buff.code);
     strcpy(new->employee.name, buff.name);
     strcpy(new->employee.address, buff.address);
@@ -128,11 +127,23 @@ element* insert_employee(element *list) {
 void read_employee(element *list) {
     element *aux = list;
 
-    printf("\nLISTAGEM\n");
+    printf("\nLIST\n");
     while(aux != NULL) {
         printf("code: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
         aux = aux->next;
     }
+}
+
+void read_employee_by_code(element *list) {
+    element *aux = list;
+    char buff_code[50];
+    input(buff_code, 50, "code of the employee you want to print: ");
+
+    while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        aux = aux->next;
+    }
+
+    printf("\ncode: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
 }
 
 element* update_employee(element *list) {
@@ -238,10 +249,6 @@ int main() {
     list = insert_employee(list);
     read_employee(list);
 
-    list = update_employee(list);
-    read_employee(list);
-
-    list = delete_employee(list);
-    read_employee(list);
+    read_employee_by_code(list);
     return 0;
 }
