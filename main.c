@@ -40,7 +40,7 @@ typedef struct {
     char address[255];
     char wage[50];
     char birth_date[50];
-    vehicles vehicles;
+    vehicles *vehicles;
 } employee;
 
 typedef struct {
@@ -68,6 +68,53 @@ void lower_case(char *string) {
 element* create_element() {
     element *new = (element*) malloc(sizeof(element));
     return new;
+}
+
+vehicles* create_vehicle() {
+    vehicles *new = (vehicles*) malloc(sizeof(vehicles));
+    return new;
+}
+
+element* insert_vehicle(element *list) {
+    element *aux = list;
+    vehicles *new = create_vehicle();
+    buffer_veh buff;
+    char buff_code[50];
+    input(buff_code, 50, "code of the employee you want to add a car:");
+
+    while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        aux = aux->next;
+    }
+
+    if(aux == NULL) {
+        printf("This code does not belongs to an employee!");
+        return list;
+    }
+
+    input(buff.code, 50, "code:");
+    strcpy(buff.employee_code, aux->employee.code);
+    input(buff.description, 255, "description:");
+    input(buff.brand, 50, "brand:");
+    input(buff.model, 50, "model:");
+    input(buff.plate, 50, "plate:");
+
+    strcpy(new->vehicle.code, buff.code);
+    strcpy(new->vehicle.employee_code, buff.employee_code);
+    strcpy(new->vehicle.description, buff.description);
+    strcpy(new->vehicle.brand, buff.brand);
+    strcpy(new->vehicle.model, buff.model);
+    strcpy(new->vehicle.plate, buff.plate);
+
+    if(aux->employee.vehicles == NULL) {
+        aux->employee.vehicles = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = aux->employee.vehicles;
+        aux->employee.vehicles = new;
+    }
+
+    return list;
 }
 
 element* insert_employee(element *list) {
@@ -111,6 +158,7 @@ element* insert_employee(element *list) {
     strcpy(new->employee.address, buff.address);
     strcpy(new->employee.wage, buff.wage);
     strcpy(new->employee.birth_date, buff.birth_date);
+    new->employee.vehicles = NULL;
 
     if(list == NULL) {
         list = new;
@@ -130,6 +178,26 @@ void read_employee(element *list) {
     printf("\nLIST\n");
     while(aux != NULL) {
         printf("code: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
+        aux = aux->next;
+    }
+}
+
+void read_vehicles(element *list) {
+    element *aux = list;
+    char buff_code[50];
+    input(buff_code, 50, "code of the employee you want to list the vehicles:");
+
+    while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        aux = aux->next;
+    }
+
+    if(aux == NULL) {
+        printf("This code does not belongs to an employee or they do not have vehicles!");
+        return;
+    }
+
+    while(aux->employee.vehicles != NULL) {
+        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux->employee.vehicles->vehicle.code, aux->employee.vehicles->vehicle.employee_code, aux->employee.vehicles->vehicle.description, aux->employee.vehicles->vehicle.plate, aux->employee.vehicles->vehicle.brand, aux->employee.vehicles->vehicle.model);
         aux = aux->next;
     }
 }
@@ -245,10 +313,11 @@ int main() {
     element *list = NULL;
 
     list = insert_employee(list);
-    list = insert_employee(list);
-    list = insert_employee(list);
     read_employee(list);
 
-    read_employee_by_code(list);
+    list = insert_vehicle(list);
+    list = insert_vehicle(list);
+    read_vehicles(list);
+
     return 0;
 }
