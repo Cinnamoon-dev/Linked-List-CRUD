@@ -206,13 +206,46 @@ void read_vehicles(element *list) {
     }
 }
 
+void read_vehicles_by_code(element *list) {
+    element *aux = list;
+    vehicles *aux_veh;
+    char buff_code[50];
+
+    input(buff_code, 50, "code of the employee you want to list the vehicles:");
+
+    while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        aux = aux->next;
+    }
+
+    if(aux == NULL) {
+        printf("This code does not belongs to an employee or they do not have vehicles!");
+        return;
+    }
+
+    strcpy(buff_code, "");
+    input(buff_code, 50, "code of the vehicle you want to list:");
+
+    aux_veh = aux->employee.vehicles;
+    while(aux_veh != NULL && strcmp(aux_veh->vehicle.code, buff_code) != 0) {
+        aux_veh = aux_veh->next;
+    }
+
+    printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+}
+
 void read_employee_by_code(element *list) {
     element *aux = list;
     char buff_code[50];
+    
     input(buff_code, 50, "code of the employee you want to print: ");
 
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
         aux = aux->next;
+    }
+
+    if(aux == NULL) {
+        printf("This code does not belongs to an employee!");
+        return;
     }
 
     printf("\ncode: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
@@ -322,6 +355,6 @@ int main() {
     list = insert_vehicle(list);
     list = insert_vehicle(list);
     read_vehicles(list);
-
+    read_vehicles_by_code(list);
     return 0;
 }
