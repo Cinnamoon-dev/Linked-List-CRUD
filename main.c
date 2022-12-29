@@ -297,6 +297,118 @@ element* update_employee(element *list) {
     return list;
 }
 
+element* update_vehicle(element *list) {
+    element *aux = list;
+    vehicles *aux_veh;
+    buffer_veh buff;
+    char buff_code[50];
+
+    input(buff_code, 50, "code of the employee that you want to change the vehicle: ");
+
+    while(strcmp(aux->employee.code, buff_code) != 0 && aux->next != NULL) {
+        aux = aux->next;
+    }
+
+    if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        printf("The employee is not in the list!\n");
+        return list;
+    }
+
+    strcpy(buff_code, "");
+    input(buff_code, 50, "code of the vehicle that you want to change: ");
+
+    aux_veh = aux->employee.vehicles;
+    while(strcmp(aux_veh->vehicle.code, buff_code) != 0 && aux_veh->next != NULL) {
+        aux_veh = aux_veh->next;
+    }
+
+    if(aux_veh->next == NULL && strcmp(aux_veh->vehicle.code, buff_code) != 0) {
+        printf("The vehicle is not in the list!\n");
+        return list;
+    }
+
+    input(buff.code, 50, "code:");
+    strcpy(buff.employee_code, aux->employee.code);
+    input(buff.description, 255, "description:");
+    input(buff.brand, 50, "brand:");
+    input(buff.model, 50, "model:");
+    input(buff.plate, 50, "plate:");
+
+    strcpy(aux_veh->vehicle.code, buff.code);
+    strcpy(aux_veh->vehicle.employee_code, buff.employee_code);
+    strcpy(aux_veh->vehicle.description, buff.description);
+    strcpy(aux_veh->vehicle.brand, buff.brand);
+    strcpy(aux_veh->vehicle.model, buff.model);
+    strcpy(aux_veh->vehicle.plate, buff.plate);
+
+    return list;
+}
+
+element* delete_vehicle(element *list) {
+    element *aux = list;
+    vehicles *aux_veh;
+    char buff_code[50];
+
+    input(buff_code, 50, "code of the employee that you want to delete the vehicle: ");
+
+    while(strcmp(aux->employee.code, buff_code) != 0 && aux->next != NULL) {
+        aux = aux->next;
+    }
+
+    if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
+        printf("The employee is not in the list!\n");
+        return list;
+    }
+
+    aux_veh = aux->employee.vehicles;
+    if(aux_veh == NULL) {
+        printf("You can't delete from an empty list\n");
+        return list;
+    }
+
+    strcpy(buff_code, "");
+    input(buff_code, 50, "code of the vehicle that you want to delete: ");
+
+    if(strcmp(aux_veh->vehicle.code, buff_code) == 0) {
+        vehicles *aux_veh2 = aux_veh;
+
+        aux_veh = aux_veh->next;
+        free(aux_veh2);
+
+        return list;
+    }
+    else {
+        if(aux_veh->next != NULL) {
+            vehicles *veh_bfr = aux_veh;
+            vehicles *veh = aux_veh->next;
+            vehicles *veh_rmv = NULL;
+
+            while(veh->next != NULL && strcmp(veh->vehicle.code, buff_code) != 0) {
+                veh_bfr = veh_bfr->next;
+                veh = veh->next;
+            }
+
+            if(veh->next == NULL && strcmp(veh->vehicle.code, buff_code) != 0) {
+                printf("The vehicle is not in the list!\n");
+                return list;
+            }
+
+            veh_rmv = veh;
+            veh = veh->next;
+            veh_bfr->next = veh;
+            free(veh_rmv);
+
+            return list;
+        }
+        else {
+            printf("The vehicle is not in the list!\n");
+            return list;
+        }
+    }
+
+    return list;
+}
+
 element* delete_employee(element *list) {
     if(list == NULL) {
         printf("You can't delete from an empty list\n");
@@ -354,7 +466,13 @@ int main() {
 
     list = insert_vehicle(list);
     list = insert_vehicle(list);
+    list = insert_vehicle(list);
     read_vehicles(list);
-    read_vehicles_by_code(list);
+    
+    list = update_vehicle(list);
+    read_vehicles(list);
+
+    list = delete_vehicle(list);
+    read_vehicles(list);
     return 0;
 }
