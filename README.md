@@ -1,2 +1,2 @@
 # Linked List CRUD
-A CRUD using singly linked lists in C.
+Prototypes to create the main code of the project.
