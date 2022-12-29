@@ -233,7 +233,7 @@ void read_employee(element *list) {
 
     printf("\nREAD EMPLOYEE\n");
     if(aux == NULL) {
-        printf("No employees created, empty list!\n");
+        printf("No employees created, empty list!\n\n");
         return;
     }
     while(aux != NULL) {
@@ -265,7 +265,7 @@ void read_vehicles(element *list) {
 
     printf("\nREAD VEHICLE\n");
     while(aux_veh != NULL) {
-        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+        printf("employee's code: %s\ncode: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.employee_code, aux_veh->vehicle.code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
         aux_veh = aux_veh->next;
     }
 }
@@ -300,7 +300,7 @@ void read_vehicles_by_code(element *list) {
     }
 
     printf("\nREAD VEHICLE BY CODE\n");
-    printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+    printf("employee's code: %s\ncode: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.employee_code, aux_veh->vehicle.code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
 }
 
 void read_employee_by_code(element *list) {
@@ -401,20 +401,20 @@ element* update_vehicle(element *list) {
         if(aux->employee.vehicles == NULL) {
         printf("\nUPDATE VEHICLE\n");
         do {
-            input(buff.code, 50, "code:");
+            input(buff.code, 50, "code(can not repeat or be empty):");
         } while(strlen(buff.code) == 0);
         strcpy(buff.employee_code, aux->employee.code);
         do{
-            input(buff.description, 255, "description:");
+            input(buff.description, 255, "description(can not be empty):");
         } while(strlen(buff.description) == 0);
         do{
-            input(buff.brand, 50, "brand:");
+            input(buff.brand, 50, "brand(can not be empty):");
         } while(strlen(buff.brand) == 0);
         do{
-            input(buff.model, 50, "model:");
+            input(buff.model, 50, "model(can not be empty):");
         } while(strlen(buff.model) == 0);
         do{
-            input(buff.plate, 50, "plate:");
+            input(buff.plate, 50, "plate(can not be empty):");
         } while(strlen(buff.plate) == 0);
     }
     else {
@@ -424,7 +424,7 @@ element* update_vehicle(element *list) {
         printf("\nUPDATE VEHICLE\n");
         do {
             count = 0;
-            input(buff.code, 50, "code:");
+            input(buff.code, 50, "code(can not repeat or be empty):");
             
             while(aux_cmp != NULL) {
                 if(strcmp(aux_cmp->vehicle.code, buff.code) == 0) {
@@ -442,7 +442,7 @@ element* update_vehicle(element *list) {
         aux_cmp = aux->employee.vehicles;
         do{
             count = 0;
-            input(buff.description, 255, "description:");
+            input(buff.description, 255, "description(can not repeat or be empty):");
 
             while(aux_cmp != NULL) {
                 if(strcmp(aux_cmp->vehicle.description, buff.description) == 0) {
@@ -455,13 +455,13 @@ element* update_vehicle(element *list) {
             aux_cmp = aux->employee.vehicles;
         } while(strlen(buff.description) == 0 || count != 0);
         do{
-            input(buff.brand, 50, "brand:");
+            input(buff.brand, 50, "brand(can not be empty):");
         } while(strlen(buff.brand) == 0);
         do{
-            input(buff.model, 50, "model:");
+            input(buff.model, 50, "model(can not be empty):");
         } while(strlen(buff.model) == 0);
         do{
-            input(buff.plate, 50, "plate:");
+            input(buff.plate, 50, "plate(can not be empty):");
         } while(strlen(buff.plate) == 0);
     }
 
@@ -591,14 +591,99 @@ element* delete_employee(element *list) {
 
 int main() {
     element *list = NULL;
+    int menu = -1;
 
-    list = insert_employee(list);
-    read_employee(list);
+    do {
+        char aux[5];
+        printf("1 - Employee\n");
+        printf("2 - Vehicle\n");
+        printf("3 - Quit\n");
 
-    list = insert_vehicle(list);
-    list = insert_vehicle(list);
-    list = insert_vehicle(list);
-    read_vehicles(list);
+        input(aux, 5, ">> ");
+        menu = atoi(aux);
+
+        switch(menu) {
+            case 1:
+                printf("\n1 - Insert employee\n");
+                printf("2 - Update employee\n");
+                printf("3 - Read all employees\n");
+                printf("4 - Read one employee by code\n");
+                printf("5 - Delete employee\n");
+                printf("6 - Go back\n");
+
+                input(aux, 5, ">> ");
+                printf("\n");
+                menu = atoi(aux);
+
+                switch(menu) {
+                    case 1:
+                        list = insert_employee(list);
+                        break;
+                    case 2:
+                        list = update_employee(list);
+                        printf("\n");
+                        break;
+                    case 3:
+                        read_employee(list);
+                        break;
+                    case 4:
+                        read_employee_by_code(list);
+                        break;
+                    case 5:
+                        list = delete_employee(list);
+                        printf("\n");
+                        break;
+                    case 6:
+                        break;
+                    default:
+                        printf("This is not a valid input!\n\n");
+                        break;
+                }
+                break;
+            case 2:
+                printf("1 - Insert vehicle\n");
+                printf("2 - Update vehicle\n");
+                printf("3 - Read all vehicles from one employee\n");
+                printf("4 - Read one vehicle by code\n");
+                printf("5 - Delete vehicle\n");
+                printf("6 - Go back\n");
+
+                input(aux, 5, ">> ");
+                menu = atoi(aux);
+
+                switch(menu) {
+                    case 1:
+                        list = insert_vehicle(list);
+                        printf("\n");
+                        break;
+                    case 2:
+                        list = update_vehicle(list);
+                        printf("\n");
+                        break;
+                    case 3:
+                        read_vehicles(list);
+                        break;
+                    case 4:
+                        read_vehicles_by_code(list);
+                        break;
+                    case 5:
+                        list = delete_vehicle(list);
+                        break;
+                    case 6:
+                        break;
+                    default:
+                        printf("This is not a valid input!\n\n");
+                        break;
+                }
+                break;
+            case 3:
+                menu = 0;
+                break;
+            default:
+                printf("This is not a valid input!\n\n");
+                break;
+        }
+    } while(menu != 0);
     
     return 0;
 }
