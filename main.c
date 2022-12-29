@@ -92,12 +92,72 @@ element* insert_vehicle(element *list) {
         return list;
     }
 
-    input(buff.code, 50, "code:");
-    strcpy(buff.employee_code, aux->employee.code);
-    input(buff.description, 255, "description:");
-    input(buff.brand, 50, "brand:");
-    input(buff.model, 50, "model:");
-    input(buff.plate, 50, "plate:");
+    if(aux->employee.vehicles == NULL) {
+        printf("\nCREATE VEHICLE\n");
+        do {
+            input(buff.code, 50, "code:");
+        } while(strlen(buff.code) == 0);
+        strcpy(buff.employee_code, aux->employee.code);
+        do{
+            input(buff.description, 255, "description:");
+        } while(strlen(buff.description) == 0);
+        do{
+            input(buff.brand, 50, "brand:");
+        } while(strlen(buff.brand) == 0);
+        do{
+            input(buff.model, 50, "model:");
+        } while(strlen(buff.model) == 0);
+        do{
+            input(buff.plate, 50, "plate:");
+        } while(strlen(buff.plate) == 0);
+    }
+    else {
+        vehicles *aux_cmp = aux->employee.vehicles;
+        int count;
+
+        printf("\nCREATE VEHICLE\n");
+        do {
+            count = 0;
+            input(buff.code, 50, "code:");
+            
+            while(aux_cmp != NULL) {
+                if(strcmp(aux_cmp->vehicle.code, buff.code) == 0) {
+                    count++;
+                    break;
+                }
+                aux_cmp = aux_cmp->next;
+            }
+
+            aux_cmp = aux->employee.vehicles;
+        } while(strlen(buff.code) == 0 || count != 0);
+
+        strcpy(buff.employee_code, aux->employee.code);
+
+        aux_cmp = aux->employee.vehicles;
+        do{
+            count = 0;
+            input(buff.description, 255, "description:");
+
+            while(aux_cmp != NULL) {
+                if(strcmp(aux_cmp->vehicle.description, buff.description) == 0) {
+                    count++;
+                    break;
+                }
+                aux_cmp = aux_cmp->next;
+            }
+
+            aux_cmp = aux->employee.vehicles;
+        } while(strlen(buff.description) == 0 || count != 0);
+        do{
+            input(buff.brand, 50, "brand:");
+        } while(strlen(buff.brand) == 0);
+        do{
+            input(buff.model, 50, "model:");
+        } while(strlen(buff.model) == 0);
+        do{
+            input(buff.plate, 50, "plate:");
+        } while(strlen(buff.plate) == 0);
+    }
 
     strcpy(new->vehicle.code, buff.code);
     strcpy(new->vehicle.employee_code, buff.employee_code);
@@ -123,6 +183,7 @@ element* insert_employee(element *list) {
     buffer_emp buff;
 
     if(list == NULL) {
+        printf("\nCREATE EMPLOYEE\n");
         do { input(buff.code, 50, "code(can not repeat or be empty): "); } while(strlen(buff.code) == 0);
         do { input(buff.name, 255, "name(can not be empty): "); } while(strlen(buff.name) == 0);
         do { input(buff.address, 255, "address(can not be empty): "); } while(strlen(buff.address) == 0);
@@ -133,6 +194,7 @@ element* insert_employee(element *list) {
         element *aux = list;
         int count;
 
+        printf("\nCREATE EMPLOYEE\n");
         do{
             count = 0;
             input(buff.code, 50, "code(can not repeat or be empty): ");
@@ -176,7 +238,11 @@ element* insert_employee(element *list) {
 void read_employee(element *list) {
     element *aux = list;
 
-    printf("\nLIST\n");
+    printf("\nREAD EMPLOYEE\n");
+    if(aux == NULL) {
+        printf("No employees created, empty list!\n");
+        return;
+    }
     while(aux != NULL) {
         printf("code: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
         aux = aux->next;
@@ -193,13 +259,18 @@ void read_vehicles(element *list) {
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
         aux = aux->next;
     }
+    aux_veh = aux->employee.vehicles;
 
     if(aux == NULL) {
-        printf("This code does not belongs to an employee or they do not have vehicles!");
+        printf("This code does not belongs to an employee!\n");
+        return;
+    }
+    else if(aux_veh == NULL) {
+        printf("This employee does not have any vehicles!\n");
         return;
     }
 
-    aux_veh = aux->employee.vehicles;
+    printf("\nREAD VEHICLE\n");
     while(aux_veh != NULL) {
         printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
         aux_veh = aux_veh->next;
@@ -216,20 +287,26 @@ void read_vehicles_by_code(element *list) {
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
         aux = aux->next;
     }
+    aux_veh = aux->employee.vehicles;
 
     if(aux == NULL) {
         printf("This code does not belongs to an employee or they do not have vehicles!");
+        return;
+    }
+    else if(aux_veh == NULL) {
+        printf("\nREAD VEHICLE BY CODE\n");
+        printf("This employee does not have any vehicles!\n");
         return;
     }
 
     strcpy(buff_code, "");
     input(buff_code, 50, "code of the vehicle you want to list:");
 
-    aux_veh = aux->employee.vehicles;
     while(aux_veh != NULL && strcmp(aux_veh->vehicle.code, buff_code) != 0) {
         aux_veh = aux_veh->next;
     }
 
+    printf("\nREAD VEHICLE BY CODE\n");
     printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
 }
 
@@ -248,6 +325,7 @@ void read_employee_by_code(element *list) {
         return;
     }
 
+    printf("\nREAD EMPLOYEE BY CODE\n");
     printf("\ncode: %s\nname: %s\naddress: %s\nwage: %s\nbirth date: %s\n\n", aux->employee.code, aux->employee.name, aux->employee.address, aux->employee.wage, aux->employee.birth_date);
 }
 
@@ -327,12 +405,72 @@ element* update_vehicle(element *list) {
         return list;
     }
 
-    input(buff.code, 50, "code:");
-    strcpy(buff.employee_code, aux->employee.code);
-    input(buff.description, 255, "description:");
-    input(buff.brand, 50, "brand:");
-    input(buff.model, 50, "model:");
-    input(buff.plate, 50, "plate:");
+        if(aux->employee.vehicles == NULL) {
+        printf("\nUPDATE VEHICLE\n");
+        do {
+            input(buff.code, 50, "code:");
+        } while(strlen(buff.code) == 0);
+        strcpy(buff.employee_code, aux->employee.code);
+        do{
+            input(buff.description, 255, "description:");
+        } while(strlen(buff.description) == 0);
+        do{
+            input(buff.brand, 50, "brand:");
+        } while(strlen(buff.brand) == 0);
+        do{
+            input(buff.model, 50, "model:");
+        } while(strlen(buff.model) == 0);
+        do{
+            input(buff.plate, 50, "plate:");
+        } while(strlen(buff.plate) == 0);
+    }
+    else {
+        vehicles *aux_cmp = aux->employee.vehicles;
+        int count;
+
+        printf("\nUPDATE VEHICLE\n");
+        do {
+            count = 0;
+            input(buff.code, 50, "code:");
+            
+            while(aux_cmp != NULL) {
+                if(strcmp(aux_cmp->vehicle.code, buff.code) == 0) {
+                    count++;
+                    break;
+                }
+                aux_cmp = aux_cmp->next;
+            }
+
+            aux_cmp = aux->employee.vehicles;
+        } while(strlen(buff.code) == 0 || count != 0);
+
+        strcpy(buff.employee_code, aux->employee.code);
+
+        aux_cmp = aux->employee.vehicles;
+        do{
+            count = 0;
+            input(buff.description, 255, "description:");
+
+            while(aux_cmp != NULL) {
+                if(strcmp(aux_cmp->vehicle.description, buff.description) == 0) {
+                    count++;
+                    break;
+                }
+                aux_cmp = aux_cmp->next;
+            }
+
+            aux_cmp = aux->employee.vehicles;
+        } while(strlen(buff.description) == 0 || count != 0);
+        do{
+            input(buff.brand, 50, "brand:");
+        } while(strlen(buff.brand) == 0);
+        do{
+            input(buff.model, 50, "model:");
+        } while(strlen(buff.model) == 0);
+        do{
+            input(buff.plate, 50, "plate:");
+        } while(strlen(buff.plate) == 0);
+    }
 
     strcpy(aux_veh->vehicle.code, buff.code);
     strcpy(aux_veh->vehicle.employee_code, buff.employee_code);
@@ -469,10 +607,5 @@ int main() {
     list = insert_vehicle(list);
     read_vehicles(list);
     
-    list = update_vehicle(list);
-    read_vehicles(list);
-
-    list = delete_vehicle(list);
-    read_vehicles(list);
     return 0;
 }
