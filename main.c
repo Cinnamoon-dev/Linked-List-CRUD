@@ -58,13 +58,6 @@ void input(char str[], int tam, char *msg) {
         str[ln] = '\0';
 }
 
-void lower_case(char *string) {
-    for(int i = 0; i < strlen(string); i++)
-    {
-        string[i] = tolower(string[i]);
-    }
-}
-
 element* create_element() {
     element *new = (element*) malloc(sizeof(element));
     return new;
@@ -95,20 +88,20 @@ element* insert_vehicle(element *list) {
     if(aux->employee.vehicles == NULL) {
         printf("\nCREATE VEHICLE\n");
         do {
-            input(buff.code, 50, "code:");
+            input(buff.code, 50, "code(can not repeat or be empty):");
         } while(strlen(buff.code) == 0);
         strcpy(buff.employee_code, aux->employee.code);
         do{
-            input(buff.description, 255, "description:");
+            input(buff.description, 255, "description(can not repeat or be empty):");
         } while(strlen(buff.description) == 0);
         do{
-            input(buff.brand, 50, "brand:");
+            input(buff.brand, 50, "brand(can not be empty):");
         } while(strlen(buff.brand) == 0);
         do{
-            input(buff.model, 50, "model:");
+            input(buff.model, 50, "model(can not be empty):");
         } while(strlen(buff.model) == 0);
         do{
-            input(buff.plate, 50, "plate:");
+            input(buff.plate, 50, "plate(can not be empty):");
         } while(strlen(buff.plate) == 0);
     }
     else {
@@ -118,7 +111,7 @@ element* insert_vehicle(element *list) {
         printf("\nCREATE VEHICLE\n");
         do {
             count = 0;
-            input(buff.code, 50, "code:");
+            input(buff.code, 50, "code(can not repeat or be empty):");
             
             while(aux_cmp != NULL) {
                 if(strcmp(aux_cmp->vehicle.code, buff.code) == 0) {
@@ -136,7 +129,7 @@ element* insert_vehicle(element *list) {
         aux_cmp = aux->employee.vehicles;
         do{
             count = 0;
-            input(buff.description, 255, "description:");
+            input(buff.description, 255, "description(can not repeat or be empty):");
 
             while(aux_cmp != NULL) {
                 if(strcmp(aux_cmp->vehicle.description, buff.description) == 0) {
@@ -149,13 +142,13 @@ element* insert_vehicle(element *list) {
             aux_cmp = aux->employee.vehicles;
         } while(strlen(buff.description) == 0 || count != 0);
         do{
-            input(buff.brand, 50, "brand:");
+            input(buff.brand, 50, "brand(can not be empty):");
         } while(strlen(buff.brand) == 0);
         do{
-            input(buff.model, 50, "model:");
+            input(buff.model, 50, "model(can not be empty):");
         } while(strlen(buff.model) == 0);
         do{
-            input(buff.plate, 50, "plate:");
+            input(buff.plate, 50, "plate(can not be empty):");
         } while(strlen(buff.plate) == 0);
     }
 
@@ -272,7 +265,7 @@ void read_vehicles(element *list) {
 
     printf("\nREAD VEHICLE\n");
     while(aux_veh != NULL) {
-        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+        printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
         aux_veh = aux_veh->next;
     }
 }
@@ -307,7 +300,7 @@ void read_vehicles_by_code(element *list) {
     }
 
     printf("\nREAD VEHICLE BY CODE\n");
-    printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+    printf("code: %s\nemployee's code: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.code, aux_veh->vehicle.employee_code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
 }
 
 void read_employee_by_code(element *list) {
