@@ -101,6 +101,47 @@ element* delete_element(element *list, int value) {
     return list;
 }
 
+void write_file(element *list) {
+    FILE *f = fopen("data.bin", "ab");
+    element *aux = list;
+    int *data;
+
+    if(f == NULL) {
+        printf("No memory availabe!\n");
+        return;
+    }
+
+    fseek(f, 0, SEEK_END);
+    while(aux != NULL) {
+        data = &aux->num;
+        fwrite(data, sizeof(int), 1, f);
+
+        aux = aux->next;
+    }
+
+    fclose(f);
+}
+
+element* read_file(element *list) {
+    FILE *f = fopen("data.bin", "rb");
+    int *data = malloc(sizeof(int));
+
+    fseek(f, 0, SEEK_SET);
+    while(1) {
+        fread(data, sizeof(int), 1, f);
+
+        if(feof(f)) { 
+            break;
+        }
+
+        list = insert_element(list, *data);
+    }
+
+    fclose(f);
+    free(data);
+    return list;
+}
+
 int main() {
     element *list = NULL;
 
@@ -108,16 +149,11 @@ int main() {
     list = insert_element(list, 2);
     list = insert_element(list, 3);
     list = insert_element(list, 4);
+    list = insert_element(list, 5);
 
+    list = read_file(list);
     read_element(list);
-
-    list = update_element(list, 7, 2);
-
-    read_element(list);
-
-    list = delete_element(list, 3);
-
-    read_element(list);
+    write_file(list);
 
     return 0;
 }
