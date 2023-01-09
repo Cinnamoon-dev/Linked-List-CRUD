@@ -5,23 +5,6 @@
 
 typedef struct {
     char code[50];
-    char name[255];
-    char address[255];
-    char wage[50];
-    char birth_date[50];
-} buffer_emp;
-
-typedef struct {
-    char code[50];
-    char employee_code[50];
-    char description[255];
-    char plate[50];
-    char brand[50];
-    char model[50];
-} buffer_veh;
-
-typedef struct {
-    char code[50];
     char employee_code[50];
     char description[255];
     char plate[20];
@@ -70,7 +53,7 @@ vehicles* create_vehicle() {
 vehicles* insert_vehicle(element *list, vehicles *veh_list) {
     element *aux = list;
     vehicles *new = create_vehicle();
-    buffer_veh buff;
+    vehicle buff;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee you want to add a car:");
@@ -172,7 +155,7 @@ vehicles* insert_vehicle(element *list, vehicles *veh_list) {
 
 element* insert_employee(element *list) {
     element *new = create_element();
-    buffer_emp buff;
+    employee buff;
 
     if(list == NULL) {
         printf("\nCREATE EMPLOYEE\n");
@@ -324,7 +307,7 @@ element* update_employee(element *list) {
     element *aux = list;
     char buff_code[50];
     int count;
-    buffer_emp buff;
+    employee buff;
 
     input(buff_code, 50, "code of the employee that you want to change: ");
 
@@ -369,7 +352,7 @@ element* update_employee(element *list) {
 vehicles* update_vehicle(element *list, vehicles *veh_list) {
     element *aux = list;
     vehicles *aux_veh = veh_list;
-    buffer_veh buff;
+    vehicle buff;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee that you want to change the vehicle: ");
@@ -584,19 +567,236 @@ element* delete_employee(element *list) {
     return list;
 }
 
+element* insert_employee_data(element *list, employee buff) {
+    element *new = create_element();
+
+    strcpy(new->employee.code, buff.code);
+    strcpy(new->employee.address, buff.address);
+    strcpy(new->employee.name, buff.name);
+    strcpy(new->employee.birth_date, buff.birth_date);
+    strcpy(new->employee.wage, buff.wage);
+
+    if(list == NULL) {
+        list = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list = new;
+    }
+
+    return list;
+}
+
+vehicles* insert_vehicle_data(vehicles *list, vehicle buff) {
+    vehicles *new = create_vehicle();
+
+    strcpy(new->vehicle.code, buff.code);
+    strcpy(new->vehicle.description, buff.description);
+    strcpy(new->vehicle.employee_code, buff.employee_code);
+    strcpy(new->vehicle.brand, buff.brand);
+    strcpy(new->vehicle.model, buff.model);
+    strcpy(new->vehicle.plate, buff.plate);
+
+    if(list == NULL) {
+        list = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list = new;
+    }
+
+    return list;
+}
+
+void write_file_employee(element *list) {
+    FILE *f = fopen("employee.bin", "ab");
+    element *aux = list;
+    employee *data; // possivel solução usar um ponteiro para employee
+
+    if(f == NULL) {
+        printf("No memory availabe\n");
+        return;
+    }
+
+    fseek(f, 0, SEEK_END);
+    while(aux != NULL) {
+        data = &aux->employee;
+        fwrite(data, sizeof(employee), 1, f); // tamanho do buffer e nao da lista
+
+        aux = aux->next;
+    }
+
+    fclose(f);
+}
+
+element* read_file_employee(element *list) {
+    FILE *f = fopen("employee.bin", "ab+");
+    employee *data = malloc(sizeof(employee));
+
+    fseek(f, 0, SEEK_SET);
+    while(1) {
+        fread(data, sizeof(employee), 1, f);
+
+        if(feof(f)) {
+            break;
+        }
+
+        list = insert_employee_data(list, *data);
+    }
+
+    fclose(f);
+    free(data);
+    return list;
+}
+
+vehicles* read_file_vehicles(vehicles *list) {
+    FILE *f = fopen("vehicles.bin", "ab+");
+    vehicle *data = malloc(sizeof(vehicle));
+
+    fseek(f, 0, SEEK_SET);
+    while(1) {
+        fread(data, sizeof(vehicle), 1, f);
+
+        if(feof(f)) {
+            break;
+        }
+
+        list = insert_vehicle_data(list, *data);
+    }
+
+    fclose(f);
+    return list;
+}
+
+void write_file_vehicle(vehicles *list) {
+    FILE *f = fopen("vehicles.bin", "ab");
+    vehicles *aux = list;
+    vehicle *data;
+
+    if(f == NULL) {
+        printf("No memory availabe\n");
+        return;
+    }
+
+    fseek(f, 0, SEEK_END);
+    while(aux != NULL) {
+        data = &aux->vehicle;
+        fwrite(data, sizeof(vehicle), 1, f);
+
+        aux = aux->next;
+    }
+
+    fclose(f);
+}
+
 int main() {
     element *emp_list = NULL;
     vehicles *veh_list = NULL;
     int menu = -1;
 
-    emp_list = insert_employee(emp_list);
-    veh_list = insert_vehicle(emp_list, veh_list);
-    veh_list = insert_vehicle(emp_list, veh_list);
-    veh_list = insert_vehicle(emp_list, veh_list);
-    read_vehicles(emp_list, veh_list);
+    do {
+        char aux[5];
+        printf("1 - Employee\n");
+        printf("2 - Vehicle\n");
+        printf("3 - Save\n");
+        printf("4 - Load\n");
+        printf("5 - Quit\n");
 
-    veh_list = delete_vehicle(emp_list, veh_list);
-    read_vehicles(emp_list, veh_list);
+        input(aux, 5, ">> ");
+        menu = atoi(aux);
+
+        switch(menu) {
+            case 1:
+                printf("\n1 - Insert employee\n");
+                printf("2 - Update employee\n");
+                printf("3 - Read all employees\n");
+                printf("4 - Read one employee by code\n");
+                printf("5 - Delete employee\n");
+                printf("6 - Go back\n");
+
+                input(aux, 5, ">> ");
+                printf("\n");
+                menu = atoi(aux);
+
+                switch(menu) {
+                    case 1:
+                        emp_list = insert_employee(emp_list);
+                        break;
+                    case 2:
+                        emp_list = update_employee(emp_list);
+                        printf("\n");
+                        break;
+                    case 3:
+                        read_employee(emp_list);
+                        break;
+                    case 4:
+                        read_employee_by_code(emp_list);
+                        break;
+                    case 5:
+                        emp_list = delete_employee(emp_list);
+                        printf("\n");
+                        break;
+                    case 6:
+                        break;
+                    default:
+                        printf("This is not a valid input!\n\n");
+                        break;
+                }
+                break;
+            case 2:
+                printf("1 - Insert vehicle\n");
+                printf("2 - Update vehicle\n");
+                printf("3 - Read all vehicles from one employee\n");
+                printf("4 - Read one vehicle by code\n");
+                printf("5 - Delete vehicle\n");
+                printf("6 - Go back\n");
+
+                input(aux, 5, ">> ");
+                menu = atoi(aux);
+
+                switch(menu) {
+                    case 1:
+                        veh_list = insert_vehicle(emp_list, veh_list);
+                        printf("\n");
+                        break;
+                    case 2:
+                        veh_list = update_vehicle(emp_list, veh_list);
+                        printf("\n");
+                        break;
+                    case 3:
+                        read_vehicles(emp_list, veh_list);
+                        break;
+                    case 4:
+                        read_vehicles_by_code(emp_list, veh_list);
+                        break;
+                    case 5:
+                        veh_list = delete_vehicle(emp_list, veh_list);
+                        break;
+                    case 6:
+                        break;
+                    default:
+                        printf("This is not a valid input!\n\n");
+                        break;
+                }
+                break;
+            case 3:
+                write_file_employee(emp_list);
+                write_file_vehicle(veh_list);
+                break;
+            case 4:
+                emp_list = read_file_employee(emp_list);
+                veh_list = read_file_vehicles(veh_list);
+                break;
+            case 5:
+                menu = 0;
+                break;
+            default:
+                printf("This is not a valid input!\n\n");
+                break;
+        }
+    } while(menu != 0);
 
     return 0;
 }
