@@ -613,7 +613,7 @@ vehicles* insert_vehicle_data(vehicles *list, vehicle buff) {
 void write_file_employee(element *list) {
     FILE *f = fopen("employee.bin", "ab");
     element *aux = list;
-    employee *data; // possivel solução usar um ponteiro para employee
+    employee *data;
 
     if(f == NULL) {
         printf("No memory availabe\n");
@@ -623,7 +623,7 @@ void write_file_employee(element *list) {
     fseek(f, 0, SEEK_END);
     while(aux != NULL) {
         data = &aux->employee;
-        fwrite(data, sizeof(employee), 1, f); // tamanho do buffer e nao da lista
+        fwrite(data, sizeof(employee), 1, f);
 
         aux = aux->next;
     }
