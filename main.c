@@ -5,23 +5,6 @@
 
 typedef struct {
     char code[50];
-    char name[255];
-    char address[255];
-    char wage[50];
-    char birth_date[50];
-} buffer_emp;
-
-typedef struct {
-    char code[50];
-    char employee_code[50];
-    char description[255];
-    char plate[50];
-    char brand[50];
-    char model[50];
-} buffer_veh;
-
-typedef struct {
-    char code[50];
     char employee_code[50];
     char description[255];
     char plate[20];
@@ -40,7 +23,6 @@ typedef struct {
     char address[255];
     char wage[50];
     char birth_date[50];
-    vehicles *vehicles;
 } employee;
 
 typedef struct {
@@ -68,10 +50,10 @@ vehicles* create_vehicle() {
     return new;
 }
 
-element* insert_vehicle(element *list) {
+vehicles* insert_vehicle(element *list, vehicles *veh_list) {
     element *aux = list;
     vehicles *new = create_vehicle();
-    buffer_veh buff;
+    vehicle buff;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee you want to add a car:");
@@ -82,10 +64,10 @@ element* insert_vehicle(element *list) {
 
     if(aux == NULL) {
         printf("This code does not belongs to an employee!");
-        return list;
+        return veh_list;
     }
 
-    if(aux->employee.vehicles == NULL) {
+    if(veh_list == NULL) {
         printf("\nCREATE VEHICLE\n");
         do {
             input(buff.code, 50, "code(can not repeat or be empty):");
@@ -105,7 +87,7 @@ element* insert_vehicle(element *list) {
         } while(strlen(buff.plate) == 0);
     }
     else {
-        vehicles *aux_cmp = aux->employee.vehicles;
+        vehicles *aux_cmp = veh_list;
         int count;
 
         printf("\nCREATE VEHICLE\n");
@@ -121,12 +103,12 @@ element* insert_vehicle(element *list) {
                 aux_cmp = aux_cmp->next;
             }
 
-            aux_cmp = aux->employee.vehicles;
+            aux_cmp = veh_list;
         } while(strlen(buff.code) == 0 || count != 0);
 
         strcpy(buff.employee_code, aux->employee.code);
 
-        aux_cmp = aux->employee.vehicles;
+        aux_cmp = veh_list;
         do{
             count = 0;
             input(buff.description, 255, "description(can not repeat or be empty):");
@@ -139,7 +121,7 @@ element* insert_vehicle(element *list) {
                 aux_cmp = aux_cmp->next;
             }
 
-            aux_cmp = aux->employee.vehicles;
+            aux_cmp = veh_list;
         } while(strlen(buff.description) == 0 || count != 0);
         do{
             input(buff.brand, 50, "brand(can not be empty):");
@@ -159,21 +141,21 @@ element* insert_vehicle(element *list) {
     strcpy(new->vehicle.model, buff.model);
     strcpy(new->vehicle.plate, buff.plate);
 
-    if(aux->employee.vehicles == NULL) {
-        aux->employee.vehicles = new;
+    if(veh_list == NULL) {
+        veh_list = new;
         new->next = NULL;
     }
     else {
-        new->next = aux->employee.vehicles;
-        aux->employee.vehicles = new;
+        new->next = veh_list;
+        veh_list = new;
     }
 
-    return list;
+    return veh_list;
 }
 
 element* insert_employee(element *list) {
     element *new = create_element();
-    buffer_emp buff;
+    employee buff;
 
     if(list == NULL) {
         printf("\nCREATE EMPLOYEE\n");
@@ -214,7 +196,6 @@ element* insert_employee(element *list) {
     strcpy(new->employee.address, buff.address);
     strcpy(new->employee.wage, buff.wage);
     strcpy(new->employee.birth_date, buff.birth_date);
-    new->employee.vehicles = NULL;
 
     if(list == NULL) {
         list = new;
@@ -242,9 +223,9 @@ void read_employee(element *list) {
     }
 }
 
-void read_vehicles(element *list) {
+void read_vehicles(element *list, vehicles *veh_list) {
     element *aux = list;
-    vehicles *aux_veh;
+    vehicles *aux_veh = veh_list;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee you want to list the vehicles:");
@@ -252,7 +233,6 @@ void read_vehicles(element *list) {
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
         aux = aux->next;
     }
-    aux_veh = aux->employee.vehicles;
 
     if(aux == NULL) {
         printf("This code does not belongs to an employee!\n");
@@ -265,14 +245,16 @@ void read_vehicles(element *list) {
 
     printf("\nREAD VEHICLE\n");
     while(aux_veh != NULL) {
-        printf("employee's code: %s\ncode: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.employee_code, aux_veh->vehicle.code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
-        aux_veh = aux_veh->next;
+        if(strcmp(aux_veh->vehicle.employee_code, buff_code) == 0) {
+            printf("employee's code: %s\ncode: %s\ndescription: %s\nplate: %s\nbrand: %s\nmodel: %s\n\n", aux_veh->vehicle.employee_code, aux_veh->vehicle.code, aux_veh->vehicle.description, aux_veh->vehicle.plate, aux_veh->vehicle.brand, aux_veh->vehicle.model);
+            aux_veh = aux_veh->next;
+        }
     }
 }
 
-void read_vehicles_by_code(element *list) {
+void read_vehicles_by_code(element *list, vehicles *veh_list) {
     element *aux = list;
-    vehicles *aux_veh;
+    vehicles *aux_veh = veh_list;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee you want to list the vehicles:");
@@ -280,7 +262,6 @@ void read_vehicles_by_code(element *list) {
     while(aux != NULL && strcmp(aux->employee.code, buff_code) != 0) {
         aux = aux->next;
     }
-    aux_veh = aux->employee.vehicles;
 
     if(aux == NULL) {
         printf("This code does not belongs to an employee or they do not have vehicles!");
@@ -326,7 +307,7 @@ element* update_employee(element *list) {
     element *aux = list;
     char buff_code[50];
     int count;
-    buffer_emp buff;
+    employee buff;
 
     input(buff_code, 50, "code of the employee that you want to change: ");
 
@@ -368,10 +349,10 @@ element* update_employee(element *list) {
     return list;
 }
 
-element* update_vehicle(element *list) {
+vehicles* update_vehicle(element *list, vehicles *veh_list) {
     element *aux = list;
-    vehicles *aux_veh;
-    buffer_veh buff;
+    vehicles *aux_veh = veh_list;
+    vehicle buff;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee that you want to change the vehicle: ");
@@ -382,23 +363,21 @@ element* update_vehicle(element *list) {
 
     if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
         printf("The employee is not in the list!\n");
-        return list;
+        return veh_list;
     }
 
-    strcpy(buff_code, "");
     input(buff_code, 50, "code of the vehicle that you want to change: ");
 
-    aux_veh = aux->employee.vehicles;
     while(strcmp(aux_veh->vehicle.code, buff_code) != 0 && aux_veh->next != NULL) {
         aux_veh = aux_veh->next;
     }
 
     if(aux_veh->next == NULL && strcmp(aux_veh->vehicle.code, buff_code) != 0) {
         printf("The vehicle is not in the list!\n");
-        return list;
+        return veh_list;
     }
 
-        if(aux->employee.vehicles == NULL) {
+        if(veh_list == NULL) {
         printf("\nUPDATE VEHICLE\n");
         do {
             input(buff.code, 50, "code(can not repeat or be empty):");
@@ -418,7 +397,7 @@ element* update_vehicle(element *list) {
         } while(strlen(buff.plate) == 0);
     }
     else {
-        vehicles *aux_cmp = aux->employee.vehicles;
+        vehicles *aux_cmp = veh_list;
         int count;
 
         printf("\nUPDATE VEHICLE\n");
@@ -434,12 +413,12 @@ element* update_vehicle(element *list) {
                 aux_cmp = aux_cmp->next;
             }
 
-            aux_cmp = aux->employee.vehicles;
+            aux_cmp = veh_list;
         } while(strlen(buff.code) == 0 || count != 0);
 
         strcpy(buff.employee_code, aux->employee.code);
 
-        aux_cmp = aux->employee.vehicles;
+        aux_cmp = veh_list;
         do{
             count = 0;
             input(buff.description, 255, "description(can not repeat or be empty):");
@@ -452,7 +431,7 @@ element* update_vehicle(element *list) {
                 aux_cmp = aux_cmp->next;
             }
 
-            aux_cmp = aux->employee.vehicles;
+            aux_cmp = veh_list;
         } while(strlen(buff.description) == 0 || count != 0);
         do{
             input(buff.brand, 50, "brand(can not be empty):");
@@ -472,12 +451,12 @@ element* update_vehicle(element *list) {
     strcpy(aux_veh->vehicle.model, buff.model);
     strcpy(aux_veh->vehicle.plate, buff.plate);
 
-    return list;
+    return veh_list;
 }
 
-element* delete_vehicle(element *list) {
+vehicles* delete_vehicle(element *list, vehicles *veh_list) {
     element *aux = list;
-    vehicles *aux_veh;
+    vehicles *aux_veh = veh_list;
     char buff_code[50];
 
     input(buff_code, 50, "code of the employee that you want to delete the vehicle: ");
@@ -488,13 +467,12 @@ element* delete_vehicle(element *list) {
 
     if(aux->next == NULL && strcmp(aux->employee.code, buff_code) != 0) {
         printf("The employee is not in the list!\n");
-        return list;
+        return veh_list;
     }
 
-    aux_veh = aux->employee.vehicles;
     if(aux_veh == NULL) {
         printf("You can't delete from an empty list\n");
-        return list;
+        return veh_list;
     }
 
     strcpy(buff_code, "");
@@ -506,7 +484,7 @@ element* delete_vehicle(element *list) {
         aux_veh = aux_veh->next;
         free(aux_veh2);
 
-        return list;
+        return veh_list;
     }
     else {
         if(aux_veh->next != NULL) {
@@ -521,7 +499,7 @@ element* delete_vehicle(element *list) {
 
             if(veh->next == NULL && strcmp(veh->vehicle.code, buff_code) != 0) {
                 printf("The vehicle is not in the list!\n");
-                return list;
+                return veh_list;
             }
 
             veh_rmv = veh;
@@ -529,15 +507,15 @@ element* delete_vehicle(element *list) {
             veh_bfr->next = veh;
             free(veh_rmv);
 
-            return list;
+            return veh_list;
         }
         else {
             printf("The vehicle is not in the list!\n");
-            return list;
+            return veh_list;
         }
     }
 
-    return list;
+    return veh_list;
 }
 
 element* delete_employee(element *list) {
@@ -589,15 +567,142 @@ element* delete_employee(element *list) {
     return list;
 }
 
+element* insert_employee_data(element *list, employee buff) {
+    element *new = create_element();
+
+    strcpy(new->employee.code, buff.code);
+    strcpy(new->employee.address, buff.address);
+    strcpy(new->employee.name, buff.name);
+    strcpy(new->employee.birth_date, buff.birth_date);
+    strcpy(new->employee.wage, buff.wage);
+
+    if(list == NULL) {
+        list = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list = new;
+    }
+
+    return list;
+}
+
+vehicles* insert_vehicle_data(vehicles *list, vehicle buff) {
+    vehicles *new = create_vehicle();
+
+    strcpy(new->vehicle.code, buff.code);
+    strcpy(new->vehicle.description, buff.description);
+    strcpy(new->vehicle.employee_code, buff.employee_code);
+    strcpy(new->vehicle.brand, buff.brand);
+    strcpy(new->vehicle.model, buff.model);
+    strcpy(new->vehicle.plate, buff.plate);
+
+    if(list == NULL) {
+        list = new;
+        new->next = NULL;
+    }
+    else {
+        new->next = list;
+        list = new;
+    }
+
+    return list;
+}
+
+void write_file_employee(element *list) {
+    FILE *f = fopen("employee.bin", "ab");
+    element *aux = list;
+    employee *data;
+
+    if(f == NULL) {
+        printf("No memory availabe\n");
+        return;
+    }
+
+    fseek(f, 0, SEEK_END);
+    while(aux != NULL) {
+        data = &aux->employee;
+        fwrite(data, sizeof(employee), 1, f);
+
+        aux = aux->next;
+    }
+
+    fclose(f);
+}
+
+element* read_file_employee(element *list) {
+    FILE *f = fopen("employee.bin", "ab+");
+    employee *data = malloc(sizeof(employee));
+
+    fseek(f, 0, SEEK_SET);
+    while(1) {
+        fread(data, sizeof(employee), 1, f);
+
+        if(feof(f)) {
+            break;
+        }
+
+        list = insert_employee_data(list, *data);
+    }
+
+    fclose(f);
+    free(data);
+    return list;
+}
+
+vehicles* read_file_vehicles(vehicles *list) {
+    FILE *f = fopen("vehicles.bin", "ab+");
+    vehicle *data = malloc(sizeof(vehicle));
+
+    fseek(f, 0, SEEK_SET);
+    while(1) {
+        fread(data, sizeof(vehicle), 1, f);
+
+        if(feof(f)) {
+            break;
+        }
+
+        list = insert_vehicle_data(list, *data);
+    }
+
+    fclose(f);
+    return list;
+}
+
+void write_file_vehicle(vehicles *list) {
+    FILE *f = fopen("vehicles.bin", "ab");
+    vehicles *aux = list;
+    vehicle *data;
+
+    if(f == NULL) {
+        printf("No memory availabe\n");
+        return;
+    }
+
+    fseek(f, 0, SEEK_END);
+    while(aux != NULL) {
+        data = &aux->vehicle;
+        fwrite(data, sizeof(vehicle), 1, f);
+
+        aux = aux->next;
+    }
+
+    fclose(f);
+}
+
 int main() {
-    element *list = NULL;
+    element *emp_list = NULL;
+    vehicles *veh_list = NULL;
     int menu = -1;
 
     do {
         char aux[5];
         printf("1 - Employee\n");
         printf("2 - Vehicle\n");
-        printf("3 - Quit\n");
+        printf("3 - Save\n");
+        printf("4 - Load\n");
+        printf("5 - Quit\n");
 
         input(aux, 5, ">> ");
         menu = atoi(aux);
@@ -617,20 +722,20 @@ int main() {
 
                 switch(menu) {
                     case 1:
-                        list = insert_employee(list);
+                        emp_list = insert_employee(emp_list);
                         break;
                     case 2:
-                        list = update_employee(list);
+                        emp_list = update_employee(emp_list);
                         printf("\n");
                         break;
                     case 3:
-                        read_employee(list);
+                        read_employee(emp_list);
                         break;
                     case 4:
-                        read_employee_by_code(list);
+                        read_employee_by_code(emp_list);
                         break;
                     case 5:
-                        list = delete_employee(list);
+                        emp_list = delete_employee(emp_list);
                         printf("\n");
                         break;
                     case 6:
@@ -653,21 +758,21 @@ int main() {
 
                 switch(menu) {
                     case 1:
-                        list = insert_vehicle(list);
+                        veh_list = insert_vehicle(emp_list, veh_list);
                         printf("\n");
                         break;
                     case 2:
-                        list = update_vehicle(list);
+                        veh_list = update_vehicle(emp_list, veh_list);
                         printf("\n");
                         break;
                     case 3:
-                        read_vehicles(list);
+                        read_vehicles(emp_list, veh_list);
                         break;
                     case 4:
-                        read_vehicles_by_code(list);
+                        read_vehicles_by_code(emp_list, veh_list);
                         break;
                     case 5:
-                        list = delete_vehicle(list);
+                        veh_list = delete_vehicle(emp_list, veh_list);
                         break;
                     case 6:
                         break;
@@ -677,6 +782,14 @@ int main() {
                 }
                 break;
             case 3:
+                write_file_employee(emp_list);
+                write_file_vehicle(veh_list);
+                break;
+            case 4:
+                emp_list = read_file_employee(emp_list);
+                veh_list = read_file_vehicles(veh_list);
+                break;
+            case 5:
                 menu = 0;
                 break;
             default:
@@ -684,6 +797,6 @@ int main() {
                 break;
         }
     } while(menu != 0);
-    
+
     return 0;
 }
