@@ -17,3 +17,10 @@ void lower_case(char *str) {
         str[i] = tolower(str[i]);
     }
 }
+
+void upper_case(char *str) {
+    for (int i = 0; i < strlen(str); i++){
+        str[i] = toupper(str[i]);
+    }
+    
+}
