@@ -15,14 +15,16 @@ element* insert_element(element *list, int data) {
     element *new = create_element();
     new->num = data;
 
-    if(list == NULL) {
+    const int list_is_empty = (list == NULL);
+    if(list_is_empty) {
         list = new;
-        new->next = NULL;   
+        new->next = NULL;  
+
+        return list; 
     } 
-    else {
-        new->next = list;
-        list = new;
-    }
+
+    new->next = list;
+    list = new;
 
     return list;
 }
@@ -44,7 +46,9 @@ element* update_element(element *list, int data, int value) {
         aux = aux->next;
     }
 
-    if(aux->next == NULL && aux->num != value) {
+    const int end_of_list = (aux->next == NULL);
+    const int element_not_reached = (aux->num != value);
+    if(end_of_list && element_not_reached) {
         printf("This number is not in the list!\n");
         return list;
     }
@@ -54,12 +58,14 @@ element* update_element(element *list, int data, int value) {
 }
 
 element* delete_element(element *list, int value) {
-    if(list == NULL) {
+    const int list_is_empty = (list == NULL);
+    if(list_is_empty) {
         printf("You can't delete from an empty list\n");
         return list;
     }
 
-    else if(list->num == value) { // if it is the first one
+    const int delete_first_element = (list->num == value);
+    if(delete_first_element) {
         element *aux;
 
         aux = list;
@@ -69,34 +75,35 @@ element* delete_element(element *list, int value) {
         return list;
     }
 
-    else {
-        if(list->next != NULL) {
-            element *aux_bfr = list;
-            element *aux = list->next;
-            element *aux_rmv = NULL;
-
-            while(aux->next != NULL && aux->num != value) {
-                aux_bfr = aux_bfr->next;
-                aux = aux->next;
-            }
-
-            if(aux->next == NULL && aux->num != value) {
-                printf("This number is not in the list!\n");
-                return list;
-            }            
-
-            aux_rmv = aux;
-            aux = aux->next;
-            aux_bfr->next = aux;
-            free(aux_rmv);
-
-            return list;
-        }
-        else {
-            printf("This number is not in the list!\n");
-            return list;
-        }
+    const int one_element_list = (list->next == NULL);
+    if(one_element_list && !delete_first_element){
+        printf("This number is not in the list!\n");
+        return list;
     }
+
+    element *aux_bfr = list;
+    element *aux = list->next;
+    element *aux_rmv = NULL;
+
+    int in_the_end_of_list = (aux->next == NULL);
+    int element_not_reached = (aux->num != value);
+    while(!in_the_end_of_list && element_not_reached) {
+        aux_bfr = aux_bfr->next;
+        aux = aux->next;
+
+        in_the_end_of_list = (aux->next == NULL);
+        element_not_reached = (aux->num != value);
+    }
+
+    if(in_the_end_of_list && element_not_reached) {
+        printf("This number is not in the list!\n");
+        return list;
+    }            
+
+    aux_rmv = aux;
+    aux = aux->next;
+    aux_bfr->next = aux;
+    free(aux_rmv);
 
     return list;
 }
@@ -106,7 +113,8 @@ void write_file(element *list) {
     element *aux = list;
     int *data;
 
-    if(f == NULL) {
+    const int file_did_not_open = (f == NULL);
+    if(file_did_not_open) {
         printf("No memory availabe!\n");
         return;
     }
@@ -125,6 +133,12 @@ void write_file(element *list) {
 element* read_file(element *list) {
     FILE *f = fopen("data.bin", "rb");
     int *data = malloc(sizeof(int));
+
+    const int file_did_not_open = (f == NULL);
+    if(file_did_not_open) {
+        printf("No employees saved!\n");
+        return;
+    }
 
     fseek(f, 0, SEEK_SET);
     while(1) {
@@ -151,9 +165,12 @@ int main() {
     list = insert_element(list, 4);
     list = insert_element(list, 5);
 
-    list = read_file(list);
     read_element(list);
-    write_file(list);
+    list = update_element(list, 7, 3);
+    list = delete_element(list, 1);
+    list = delete_element(list, 5);
+
+    read_element(list);
 
     return 0;
 }
