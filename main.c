@@ -101,8 +101,7 @@ element* delete_element(element *list, int value) {
     }            
 
     aux_rmv = aux;
-    aux = aux->next;
-    aux_bfr->next = aux;
+    aux_bfr->next = aux->next;
     free(aux_rmv);
 
     return list;
