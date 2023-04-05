@@ -29,6 +29,23 @@ element* insert_element(element *list, int data) {
     return list;
 }
 
+void insert(element** list, int data) {
+    element* new = create_element();
+
+    const int list_is_empty = (list == NULL);
+    if(list_is_empty) {
+        new->num = data;
+        new->next = NULL;  
+        (*list) = new;
+
+        return; 
+    }
+
+    new->num = data;
+    new->next = list;
+    (*list) = new;
+}
+
 void read_element(element *list) {
     element *aux = list;
 
